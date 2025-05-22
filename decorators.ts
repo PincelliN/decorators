@@ -28,8 +28,23 @@ function autobind(
   };
 }
 
+function replacer<T>(initiValue: T) {
+  return function replacerDecorator(
+    target: undefined,
+    ctx: ClassFieldDecoratorContext
+  ) {
+    console.log(target);
+    console.log(ctx);
+    return (initialValue: any) => {
+      console.log(initialValue);
+      return initiValue;
+    };
+  };
+}
+
 @logger
 class Preson {
+  @replacer("Nicolò")
   name = "Nik";
 
   @autobind
