@@ -6,7 +6,25 @@ function logger<T extends new (...args: any[]) => any>(
   console.log(target);
   console.log(ctx);
   return class extends target {
-    age = 33;
+    constructor(...args: any[]) {
+      super(...args);
+      console.log("class constructor");
+      console.log(this);
+    }
+  };
+}
+
+function autobind(
+  target: (...args: any[]) => any,
+  ctx: ClassMemberDecoratorContext
+) {
+  ctx.addInitializer(function (this: any) {
+    this[ctx.name] = this[ctx.name].bind(this);
+  });
+
+  return function (this: any) {
+    console.log("Execiut original function");
+    target.apply(this);
   };
 }
 
@@ -14,12 +32,11 @@ function logger<T extends new (...args: any[]) => any>(
 class Preson {
   name = "Nik";
 
+  @autobind
   greet() {
     console.log("Hi, I am " + this.name);
   }
 }
 
 const nik = new Preson();
-
 nik.greet();
-console.log(nik);
